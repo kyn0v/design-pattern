@@ -81,3 +81,31 @@ class Singleton {
         return instance;
     }
 };
+
+// ---------------------饿汉版-------------------------
+// 在单例实例在程序运行时被立即执行初始化。
+// 由于在main函数执行前初始化，因此没有线程安全问题
+// 但是no-local static对象（函数外的static对象）在不同编译单元中的初始化顺序是未定义的，
+// 即：static Singleton instance;和static Singleton& getInstance()二者的初始化顺序不确定。
+// 如果在初始化完成之前调用 getInstance() 方法会返回一个未定义的实例。
+class Singleton {
+   private:
+    static Singleton instance;
+
+   private:
+    Singleton();
+    ~Singleton();
+    Singleton(const Singleton&);
+    Singleton& operator=(const Singleton&);
+
+   public:
+    static Singleton& getInstance() {
+        return instance;
+    }
+};
+// initialize defaultly
+Singleton Singleton::instance;
+
+// 注：static对象指的是内存在data段和bss段中的对象，这类对象在整个程序的生命周期内都是存在的，
+// 除非程序结束否则会一直存在，利用static关键字声明的对象是static对象中的一种，但是如果是在函
+// 数内部定义的static对象，那么这种static对象被称为local static对象，除此之外的则是non-local static对象
